@@ -1,0 +1,106 @@
+
+/*-------------------------------------------------------------------------
+    Simple math expression parser for Swift,
+    
+    (MIT License)
+
+    Copyright (c) 2021 Philipp Anné
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+-------------------------------------------------------------------------*/
+
+COMPILER MathExpr
+
+private var _val: Double = 0.0
+
+public var result: Double {
+    get { return _val }
+}
+
+CHARACTERS
+    letter = 'A'..'Z' + 'a'..'z'.
+    digit  = '0'..'9'.
+TOKENS
+    number = digit { digit } [ '.' digit { digit } ] .
+IGNORE ' ' + '\t' + '\r' + '\n'
+
+PRODUCTIONS
+  
+MathExpr = Expression<&_val> .
+
+Expression<_ value:inout Double> =
+                                            (.
+                                                var lhs: Double = 0.0
+                                                var rhs: Double = 0.0
+                                            .)
+    (
+        Term<&lhs>
+        | "-" Term<&lhs>                    (. lhs.negate() .)
+    )
+    [
+        "+" Expression<&rhs>                (. lhs += rhs .)
+        | "-" Expression<&rhs>              (. lhs -= rhs .)
+    ]
+                                            (. value = lhs .)
+    .
+
+Term<_ value:inout Double> =                (.
+                                                var lhs: Double = 0.0
+                                                var rhs: Double = 0.0
+                                            .)
+    Function<&lhs>
+    [
+        "^" Term<&rhs>                      (. lhs = pow(lhs, rhs) .)
+        | "%" Term<&rhs>                    (. lhs = lhs.truncatingRemainder(dividingBy: rhs) .)
+        | "*" Term<&rhs>                    (. lhs *= rhs .)
+        | "/" Term<&rhs>                    (. lhs /= rhs .)
+    ]                                       (. value = lhs .)
+    .
+
+Function<_ value:inout Double> =            (. var inner: Double = 0.0 .)
+    (
+    "abs" "(" Expression<&inner> ")"        (. value = abs(inner) .)
+    | "sin" "(" Expression<&inner> ")"        (. value = sin(inner) .)
+    | "cos" "(" Expression<&inner> ")"      (. value = cos(inner) .)
+    | "tan" "(" Expression<&inner> ")"      (. value = tan(inner) .)
+    | "asin" "(" Expression<&inner> ")"     (. value = asin(inner) .)
+    | "acos" "(" Expression<&inner> ")"     (. value = acos(inner) .)
+    | "atan" "(" Expression<&inner> ")"     (. value = atan(inner) .)
+    | "sinh" "(" Expression<&inner> ")"     (. value = sinh(inner) .)
+    | "cosh" "(" Expression<&inner> ")"     (. value = cosh(inner) .)
+    | "tanh" "(" Expression<&inner> ")"     (. value = tanh(inner) .)
+    | "asinh" "(" Expression<&inner> ")"    (. value = asinh(inner) .)
+    | "acosh" "(" Expression<&inner> ")"    (. value = acosh(inner) .)
+    | "atanh" "(" Expression<&inner> ")"    (. value = atanh(inner) .)
+    | "log" "(" Expression<&inner> ")"      (. value = log(inner) .)
+    | "exp" "(" Expression<&inner> ")"      (. value = exp(inner) .)
+    | "sqrt" "(" Expression<&inner> ")"     (. value = sqrt(inner) .)
+    | "sign" "(" Expression<&inner> ")"     (. value = inner < 0 ? -1 : 1 .)
+    )
+    | Factor<&value>
+    .
+
+Factor<_ value:inout Double> =
+    "(" Expression<&value> ")"
+    | "pi"                                  (. value = Double.pi .)
+    | number                                (. value = Double(t.val)! .)
+    .
+   
+END MathExpr.
+

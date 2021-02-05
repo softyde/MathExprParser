@@ -10,6 +10,9 @@
 		17AB152A25CD7F5000CCC6AA /* MathExprParser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17AB152025CD7F5000CCC6AA /* MathExprParser.framework */; };
 		17AB152F25CD7F5000CCC6AA /* MathExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AB152E25CD7F5000CCC6AA /* MathExprParserTests.swift */; };
 		17AB153125CD7F5000CCC6AA /* MathExprParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 17AB152325CD7F5000CCC6AA /* MathExprParser.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		17AB154925CD80AF00CCC6AA /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AB154725CD80AF00CCC6AA /* Parser.swift */; };
+		17AB154A25CD80AF00CCC6AA /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AB154825CD80AF00CCC6AA /* Scanner.swift */; };
+		17AB155025CD810C00CCC6AA /* String+Char.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17AB154F25CD810C00CCC6AA /* String+Char.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +32,9 @@
 		17AB152925CD7F5000CCC6AA /* MathExprParserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MathExprParserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		17AB152E25CD7F5000CCC6AA /* MathExprParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathExprParserTests.swift; sourceTree = "<group>"; };
 		17AB153025CD7F5000CCC6AA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		17AB154725CD80AF00CCC6AA /* Parser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
+		17AB154825CD80AF00CCC6AA /* Scanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
+		17AB154F25CD810C00CCC6AA /* String+Char.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Char.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +77,9 @@
 		17AB152225CD7F5000CCC6AA /* MathExprParser */ = {
 			isa = PBXGroup;
 			children = (
+				17AB154F25CD810C00CCC6AA /* String+Char.swift */,
+				17AB154725CD80AF00CCC6AA /* Parser.swift */,
+				17AB154825CD80AF00CCC6AA /* Scanner.swift */,
 				17AB152325CD7F5000CCC6AA /* MathExprParser.h */,
 				17AB152425CD7F5000CCC6AA /* Info.plist */,
 			);
@@ -147,6 +156,7 @@
 				TargetAttributes = {
 					17AB151F25CD7F5000CCC6AA = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
 					};
 					17AB152825CD7F5000CCC6AA = {
 						CreatedOnToolsVersion = 12.4;
@@ -194,6 +204,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				17AB154A25CD80AF00CCC6AA /* Scanner.swift in Sources */,
+				17AB155025CD810C00CCC6AA /* String+Char.swift in Sources */,
+				17AB154925CD80AF00CCC6AA /* Parser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,6 +353,7 @@
 		17AB153525CD7F5000CCC6AA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -357,6 +371,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = de.annee.MathExprParser;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -364,6 +379,7 @@
 		17AB153625CD7F5000CCC6AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -388,6 +404,7 @@
 		17AB153825CD7F5000CCC6AA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 42D8QLAT8T;
@@ -406,6 +423,7 @@
 		17AB153925CD7F5000CCC6AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 42D8QLAT8T;
