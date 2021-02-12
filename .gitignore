@@ -1,0 +1,7 @@
+# Xcode
+.DS_Store
+*/build/*
+xcuserdata
+.idea/
+*.hmap
+xcuserdata/*

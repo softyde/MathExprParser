@@ -29,8 +29,20 @@ COMPILER MathExpr
 
 private var _val: Double = 0.0
 
+private var _parameters: [String: Double] = [:]
+
 public var result: Double {
     get { return _val }
+}
+
+public func addParameter(_ name: String, withValue value: Double) {
+    _parameters[name] = value
+}
+
+convenience init(scanner: Scanner, withParameters parameters: [String : Double]) {
+    
+    self.init(scanner: scanner)
+    _parameters = parameters
 }
 
 CHARACTERS
@@ -38,11 +50,20 @@ CHARACTERS
     digit  = '0'..'9'.
 TOKENS
     number = digit { digit } [ '.' digit { digit } ] .
+    identifier = letter { letter | digit } .
 IGNORE ' ' + '\t' + '\r' + '\n'
 
 PRODUCTIONS
   
 MathExpr = Expression<&_val> .
+
+/*
+
+(
+        Term<&lhs>
+        | "-" Term<&lhs>                    (. lhs.negate() .)
+    )
+*/
 
 Expression<_ value:inout Double> =
                                             (.
@@ -53,10 +74,10 @@ Expression<_ value:inout Double> =
         Term<&lhs>
         | "-" Term<&lhs>                    (. lhs.negate() .)
     )
-    [
-        "+" Expression<&rhs>                (. lhs += rhs .)
-        | "-" Expression<&rhs>              (. lhs -= rhs .)
-    ]
+    {
+        "+" Term<&rhs>                      (. lhs += rhs .)
+        | "-" Term<&rhs>                    (. lhs -= rhs .)
+    }
                                             (. value = lhs .)
     .
 
@@ -64,19 +85,33 @@ Term<_ value:inout Double> =                (.
                                                 var lhs: Double = 0.0
                                                 var rhs: Double = 0.0
                                             .)
-    Function<&lhs>
-    [
-        "^" Term<&rhs>                      (. lhs = pow(lhs, rhs) .)
-        | "%" Term<&rhs>                    (. lhs = lhs.truncatingRemainder(dividingBy: rhs) .)
-        | "*" Term<&rhs>                    (. lhs *= rhs .)
-        | "/" Term<&rhs>                    (. lhs /= rhs .)
-    ]                                       (. value = lhs .)
+    Factor<&lhs>
+    {
+        "^" Factor<&rhs>                    (. lhs = pow(lhs, rhs) .)
+        | "%" Factor<&rhs>                  (. lhs = lhs.truncatingRemainder(dividingBy: rhs) .)
+        | "*" Factor<&rhs>                  (. lhs *= rhs .)
+        | "/" Factor<&rhs>                  (. lhs /= rhs .)
+    }                                       (. value = lhs .)
+    .
+
+Factor<_ value:inout Double> =
+    "(" Expression<&value> ")"
+    | Function<&value>
+    | "pi"                                  (. value = Double.pi .)
+    | number                                (. value = Double(t.val)! .)
+    | identifier                            (. 
+                                                if let p = _parameters[t.val] {
+                                                    value = p
+                                                } else {
+                                                    SemErr("parameter '\(t.val)' is not defined")
+                                                } 
+                                            .)
     .
 
 Function<_ value:inout Double> =            (. var inner: Double = 0.0 .)
     (
     "abs" "(" Expression<&inner> ")"        (. value = abs(inner) .)
-    | "sin" "(" Expression<&inner> ")"        (. value = sin(inner) .)
+    | "sin" "(" Expression<&inner> ")"      (. value = sin(inner) .)
     | "cos" "(" Expression<&inner> ")"      (. value = cos(inner) .)
     | "tan" "(" Expression<&inner> ")"      (. value = tan(inner) .)
     | "asin" "(" Expression<&inner> ")"     (. value = asin(inner) .)
@@ -91,15 +126,8 @@ Function<_ value:inout Double> =            (. var inner: Double = 0.0 .)
     | "log" "(" Expression<&inner> ")"      (. value = log(inner) .)
     | "exp" "(" Expression<&inner> ")"      (. value = exp(inner) .)
     | "sqrt" "(" Expression<&inner> ")"     (. value = sqrt(inner) .)
-    | "sign" "(" Expression<&inner> ")"     (. value = inner < 0 ? -1 : 1 .)
+    | "sign" "(" Expression<&inner> ")"     (. value = inner < 0 ? -1 : 1 .)       
     )
-    | Factor<&value>
-    .
-
-Factor<_ value:inout Double> =
-    "(" Expression<&value> ")"
-    | "pi"                                  (. value = Double.pi .)
-    | number                                (. value = Double(t.val)! .)
     .
    
 END MathExpr.
